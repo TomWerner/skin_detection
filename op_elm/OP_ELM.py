@@ -110,10 +110,11 @@ class SLFN(object):
 class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
         super().__init__(data.shape[1], targets.shape[1])
-        self.data = data
         if not inputs_normalized:
             data = preprocessing.scale(data)
+            targets = preprocessing.scale(targets)
 
+        self.data = data
         self.targets = targets
 
     def predict(self, data):
