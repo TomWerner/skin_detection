@@ -3,7 +3,6 @@ import numpy as np
 import numexpr as ne
 from scipy.linalg import solve as cpu_solve
 from sklearn import preprocessing
-from enum import Enum
 
 
 class SLFN(object):
@@ -19,7 +18,7 @@ class SLFN(object):
 
         # neuron list
         self.neurons = []
-        self.alpha = 1E-9  # normalization for H'H solution
+        self.alpha = 1E-9  # normalization for H'H solution, used to improve numeric stability
 
         # This is the output weight - hidden nodes to outputs. We solve for this
         self.beta_matrix = None
@@ -44,13 +43,15 @@ class SLFN(object):
                 # TODO: Why is it just a diagonal matrix, not random?
                 weight_matrix = np.eye(self.num_input_dimensions, num_neurons)  # diag matrix, num rows x num cols
             else:
+                # TODO: Check out Explicit Computation of Input Weights in Extreme Learning Machines
+
                 # each input has a weight, and it connects each input with each input node
                 weight_matrix = np.random.randn(self.num_input_dimensions, num_neurons)
                 #TODO: check hpelm high dimensionality fix
                 weight_matrix *= 3 / self.num_input_dimensions ** 0.5  # high dimensionality fix
                 #print(weight_matrix)
         if bias_vector is None:
-            bias_vector = np.random.randn(num_neurons) # random vector of size num_neurons
+            bias_vector = np.random.randn(num_neurons,)  # random vector of size num_neurons
             if neuron_function == "lin":
                 bias_vector = np.zeros(num_neurons)
 
@@ -73,30 +74,32 @@ class SLFN(object):
 
         self.beta_matrix = None  # need to retrain the network now
 
+    # This method should NOT be called with all of the data. It is extremely inefficient to calculate the neuron outputs
+    # for all the data at once and to store that in memory, and can be infeasible with enough data. This method is
+    # instead called with batches of data and used for piecewise matrix calculations
     def calculate_neuron_outputs(self, data):
         # assemble hidden layer output with all kinds of neurons
         assert len(self.neurons) > 0, "Model must have hidden neurons"
 
-        # The H matrix from the paper, where it contains the outputs from
-        # all the activation functions on all the inputs and weights
-        # We calculate the matrix a column at a time (for each neuron)
-        # and then combine them at the end
-        # We then want to solve for Beta, so that H * Beta = T, where T
-        # is the output values
-        hidden_layer_output = [] #H
+        hidden_layer_output = []  # H
         for neuron_function, _, weight_matrix, bias_vector in self.neurons:
+            # The input to the neuron function is x * weights + bias, data.dot(weight_matrix) does the matrix mult
             activation_function_input = data.dot(weight_matrix) + bias_vector
             activation_function_output = np.zeros(activation_function_input.shape)
 
             # calculate the activation function output
             if neuron_function == "lin":
                 activation_function_output = activation_function_input # We already computed this with the dot + bias
+
+            # If it is a supported Numexpr function, use that library, which takes advantage of multiple cores and
+            # vectorization to greatly speed this part of the process
             elif neuron_function == "sigm":
                 ne.evaluate("1/(1+exp(-activation_function_input))", out=activation_function_output)
             elif neuron_function == "tanh":
                 ne.evaluate('tanh(activation_function_input)', out=activation_function_output)
             else:
-                print(neuron_function)
+                print("INFO: You are using", neuron_function, "instead of a supported function.")
+                print("      if speed is a concern, consider implementing it here as a Numexpr function")
                 activation_function_output = neuron_function(activation_function_input)  # custom <numpy.ufunc>
 
             hidden_layer_output.append(activation_function_output)
@@ -111,8 +114,10 @@ class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
         super().__init__(data.shape[1], targets.shape[1])
         if not inputs_normalized:
-            data = preprocessing.scale(data)
-            targets = preprocessing.scale(targets)
+            pass
+            # TODO: Figure this out
+            # data = preprocessing.scale(data)
+            # targets = preprocessing.scale(targets)
 
         self.data = data
         self.targets = targets
@@ -151,6 +156,7 @@ class ELM(SLFN):
 
     def _calculate_beta_cpu(self, num_neurons, num_batches):
         # We first calculate H.transpose * H and H.transpose * Targets
+        # We never actually have H in memory
 
         # Since H=hidden_layer_output and is num_samples x num_neurons
         # H.transpose * H is of size num_neurons x num_neurons
@@ -160,14 +166,21 @@ class ELM(SLFN):
         # is num_samples x num_output_dimensions that gives us this shape
         HTT = np.zeros((num_neurons, self.num_output_dimensions))
 
-        # TODO: Figure out why
         # Adds to the matrix diagonal
+        # Adding a small amount to the matrix diagonal improves numerical stability
+        # Huang, G.-B., Zhou, H., Ding, X., Zhang, R.: Extreme learning machine for regression and
+        # multiclass classification. IEEE Trans. Syst. Man Cybern. Part B Cybern. 42(2), 513–529 (2012)
         HTH.ravel()[::num_neurons + 1] += self.alpha
 
         # Divide the data up into the batches
+        # This part is extremely parallelizable
         for data_batch, output_batch in zip(np.array_split(self.data, num_batches),
                                             np.array_split(self.targets, num_batches)):
             batch_hidden_layer_output = self.calculate_neuron_outputs(data_batch)
+
+            # H.T * H is of size num_neurons by num_neurons - this is cheap to store
+            # H.T * T is of size num_neurons by num_output_dimensions - also cheap to store
+            # We never actually store all of H at once
 
             # This is a piece of H.T * H
             HTH += np.dot(batch_hidden_layer_output.T, batch_hidden_layer_output)
@@ -175,6 +188,9 @@ class ELM(SLFN):
             HTT += np.dot(batch_hidden_layer_output.T, output_batch)
 
         # Solve for beta using scipy.linalg.cpu_solve
+        # H * Beta = Target
+        # H.T * H * Beta = H.T * T
+        # (H.T * H) * Beta = (H.T * T), solve for beta by doing (H.T * H)^-1 * (H.T * T)
         beta_matrix = cpu_solve(HTH, HTT, sym_pos=True)
 
         return HTH, HTT, beta_matrix
