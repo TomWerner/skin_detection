@@ -126,12 +126,15 @@ if __name__ == '__main__':
     output_file = parse_arg("-o", sys.argv, default="skin_data")
     surrounding_pixel_number = int(parse_arg("-p", sys.argv, default=3))
 
+    if skin_directory is not None:
+        print("INFO: Reading labels for this data")
+
     # Now that we've extracted the command line args, extract the information
     extract_pixel_information(image_number_list=image_num_list,
                               original_dir=original_directory,
                               skin_dir=skin_directory,
                               output_filename=output_file,
-                              labeled_data=(skin_directory is None),
+                              labeled_data=(skin_directory is not None),
                               surrounding_pixels=surrounding_pixel_number)
 else:
     ORIGINAL_DIRECTORY = "/Users/test/fall_2015/bigdata/project/Original/train/"
