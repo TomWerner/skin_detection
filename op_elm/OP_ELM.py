@@ -3,6 +3,7 @@ import numpy as np
 import numexpr as ne
 from scipy.linalg import solve as cpu_solve
 from sklearn import preprocessing
+import math
 
 
 class SLFN(object):
@@ -122,13 +123,20 @@ class ELM(SLFN):
         self.data = data
         self.targets = targets
 
-    def predict(self, data):
+    def predict(self, data, batch_size=100):
         if self.beta_matrix is None:
             print("ERROR: Cannot predict without first calculating beta")
             return
 
-        hidden_layer_output = self.calculate_neuron_outputs(data)
-        return hidden_layer_output.dot(np.asmatrix(self.beta_matrix))
+        result = np.zeros((data.shape[0], self.num_output_dimensions))
+        num_batches = math.ceil(data.shape[0] / batch_size) #float division, round up
+
+        current_index = 0
+        for i, data_batch in enumerate(np.array_split(data, num_batches)):
+            result[current_index: current_index + data_batch.shape[0]] = self.calculate_neuron_outputs(data_batch).dot(self.beta_matrix)
+            current_index += data_batch.shape[0]
+
+        return result
 
     def train(self, batch_size=100, use_gpu=False):
         self.beta_matrix = self._calculate_beta(batch_size, use_gpu)
@@ -143,10 +151,7 @@ class ELM(SLFN):
 
         num_neurons = sum([neuron[1] for neuron in self.neurons])
         batch_size = max(num_neurons, batch_size)
-        num_batches = self.data.shape[0] // batch_size #integer division
-
-        if self.data.shape[0] % batch_size != 0:  # Num samples is not a multiple of batch size, include the extra
-            num_batches += 1
+        num_batches = math.ceil(self.data.shape[0] / batch_size) #float division, round up
 
         if use_gpu:
             print("ERROR: GPU calculations not yet supported")
@@ -176,7 +181,7 @@ class ELM(SLFN):
         # This part is extremely parallelizable
         for data_batch, output_batch in zip(np.array_split(self.data, num_batches),
                                             np.array_split(self.targets, num_batches)):
-            batch_hidden_layer_output = self.calculate_neuron_outputs(data_batch)
+            batch_hidden_layer_output = self.calculate_neuron_outputs(np.asarray(data_batch))
 
             # H.T * H is of size num_neurons by num_neurons - this is cheap to store
             # H.T * T is of size num_neurons by num_output_dimensions - also cheap to store
