@@ -103,7 +103,7 @@ def extract_pixel_information(image_number_list,
 
 def display_help_information():
     print("python data_extraction.py")
-    print("  <load images 1 through #> ")
+    print("  <load images start#> <through end #> ")
     print("  <full image directory> ")
     print("Optional: (-l labeled_image_directory) (-o output_filename) (-p # surrounding_pixels)")
     print("Example: python data_extraction.py 10 ../Original/train/ -l ../Skin/train -o train_data -p 3")
@@ -117,11 +117,11 @@ def parse_arg(flag, sys_args, default):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3 or "-h" in sys.argv:
+    if len(sys.argv) < 4 or "-h" in sys.argv:
         display_help_information()
         exit(1)
-    image_num_list = list(range(1, int(sys.argv[1]) + 1))
-    original_directory = sys.argv[2]
+    image_num_list = list(range(int(sys.argv[1]), int(sys.argv[2]) + 1))
+    original_directory = sys.argv[3]
     skin_directory = parse_arg("-l", sys.argv, default=None)
     output_file = parse_arg("-o", sys.argv, default="skin_data")
     surrounding_pixel_number = int(parse_arg("-p", sys.argv, default=3))
