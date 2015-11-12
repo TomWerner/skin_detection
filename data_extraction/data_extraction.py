@@ -96,7 +96,7 @@ def extract_pixel_information(image_number_list,
             labels[current_index: current_index + image_labels.shape[0]] = image_labels
         current_index += image_data.shape[0]
 
-        if i % 100 == 0:
+        if i % 10 == 0:
             print("Done with the first %d images" % i)
     print("Done!")
 
