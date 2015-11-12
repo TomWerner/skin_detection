@@ -46,8 +46,10 @@ If we can calculate H.T * H and H.T * T directly, without ever calculating H, we
                 = sum from k=1 to N of (H[k][i] * T[k][j])
                 = sum from k=1 to N of (neuron_function(W[i]*X[k]) * T[k][j])
                 
-Now we never have to calculate the entire H matrix - we can directly calculate the pieces we need. 
-Additionally, H.T * H is small enough (and a symmetric positive matrix) that we can calculate its inverse extremely quickly.
+Now we never have to calculate the entire H matrix 
+ - we can directly calculate the pieces we need. 
+Additionally, H.T * H is small enough (and a symmetric positive matrix) 
+that we can calculate its inverse extremely quickly.
 ```
 
 ### Current things to improve
