@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 import h5py
 import sys
+import colorsys
 
 
 def get_pixel_class(rgb_tuple):
@@ -19,15 +20,17 @@ def get_number_of_usable_pixels(filename, original_dir, surrounding_pixels=3, ex
     return (dimensions[0] - 2 * surrounding_pixels) * (dimensions[1] - 2 * surrounding_pixels)
 
 
-def transform_pixel(rgb_tuple):
+def transform_pixel(rgb_tuple, use_hsv=False):
     red_value, green_value, blue_value = rgb_tuple
 
     # TODO: If we want to support different extraction techniques, such as HSV, etc, do it here using the RGB values
+    if use_hsv:
+        return list(colorsys.rgb_to_hsv(red_value, green_value, blue_value))
+    else:
+        return [red_value, green_value, blue_value]
 
-    return [red_value, green_value, blue_value]
 
-
-def get_image_data(filename, original_dir, skin_dir, surrounding_pixels=3, labeled_data=True):
+def get_image_data(filename, original_dir, skin_dir, surrounding_pixels=3, labeled_data=True, use_hsv=False):
     full_image = Image.open(original_dir + filename + ".jpg")
     full_pixel_data = full_image.load()
 
@@ -52,7 +55,7 @@ def get_image_data(filename, original_dir, skin_dir, surrounding_pixels=3, label
             index = 0
             for x_offset in range(-surrounding_pixels, surrounding_pixels + 1):
                 for y_offset in range(-surrounding_pixels, surrounding_pixels + 1):
-                    data[pixel_number][index: index + variables_per_pixel] = transform_pixel(full_pixel_data[x + x_offset, y + y_offset])
+                    data[pixel_number][index: index + variables_per_pixel] = transform_pixel(full_pixel_data[x + x_offset, y + y_offset], use_hsv)
                     index += variables_per_pixel
             # only try to add label information if its labeled data
             if labeled_data and labels is not None and skin_pixel_data is not None:
@@ -72,7 +75,8 @@ def extract_pixel_information(image_number_list,
                               skin_dir,
                               output_filename="skin_data",
                               labeled_data=True,
-                              surrounding_pixels=3):
+                              surrounding_pixels=3,
+                              use_hsv=False):
     # We need to know the size of the data before we create our HDF5 file, this way the compression can work best.
     # To do this we quickly go through all the files and use the metadata to calculate the number of usable pixels
     # and then calculate the dimensionality of the input data
@@ -90,7 +94,7 @@ def extract_pixel_information(image_number_list,
     current_index = 0
     for i in image_number_list:
         # If it isn't labeled data, image_labels will be None
-        image_data, image_labels = get_image_data("im%05d" % i, original_dir, skin_dir, surrounding_pixels, labeled_data)
+        image_data, image_labels = get_image_data("im%05d" % i, original_dir, skin_dir, surrounding_pixels, labeled_data, use_hsv)
         data[current_index: current_index + image_data.shape[0]] = image_data
         if labeled_data and labels is not None:
             labels[current_index: current_index + image_labels.shape[0]] = image_labels
@@ -105,7 +109,7 @@ def display_help_information():
     print("python data_extraction.py")
     print("  <load images start#> <through end #> ")
     print("  <full image directory> ")
-    print("Optional: (-l labeled_image_directory) (-o output_filename) (-p # surrounding_pixels)")
+    print("Optional: (-l labeled_image_directory) (-o output_filename) (-p # surrounding_pixels) (-hsv)")
     print("Example: python data_extraction.py 10 ../Original/train/ -l ../Skin/train -o train_data -p 3")
     print()
 
@@ -125,6 +129,7 @@ if __name__ == '__main__':
     skin_directory = parse_arg("-l", sys.argv, default=None)
     output_file = parse_arg("-o", sys.argv, default="skin_data")
     surrounding_pixel_number = int(parse_arg("-p", sys.argv, default=3))
+    use_hsv = "-hsv" in sys.argv
 
     if skin_directory is not None:
         print("INFO: Reading labels for this data")
@@ -135,7 +140,8 @@ if __name__ == '__main__':
                               skin_dir=skin_directory,
                               output_filename=output_file,
                               labeled_data=(skin_directory is not None),
-                              surrounding_pixels=surrounding_pixel_number)
+                              surrounding_pixels=surrounding_pixel_number,
+                              use_hsv=use_hsv)
 else:
     ORIGINAL_DIRECTORY = "/Users/test/fall_2015/bigdata/project/Original/train/"
     SKIN_DIRECTORY = "/Users/test/fall_2015/bigdata/project/Skin/train/"
