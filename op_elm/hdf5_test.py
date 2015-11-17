@@ -1,6 +1,6 @@
 import h5py
 import math
-from skin_detection.op_elm.OP_ELM import ELM
+from OP_ELM import ELM
 import numpy as np
 import time
 
@@ -8,8 +8,8 @@ import time
 def timeit(start_time):
     return "(%d seconds)" % (time.time() - start_time)
 
-file = h5py.File("../data_extraction/skin_data.hdf5", "r")
-batch_size = 100000  # TODO: Figure out the optimum value for hdf5 files
+file = h5py.File("../data_extraction/train_1_20_hsv.hdf5", "r")
+batch_size = 100000.0  # TODO: Figure out the optimum value for hdf5 files
 
 
 timer = time.time()
@@ -19,9 +19,9 @@ print("Data loaded", timeit(timer))
 
 timer = time.time()
 elm = ELM(data, labels)
-elm.add_neurons(100, "tanh")
-elm.add_neurons(100, "lin")
-elm.add_neurons(100, "sigm")
+elm.add_neurons(500, "tanh")
+elm.add_neurons(500, "lin")
+elm.add_neurons(500, "sigm")
 elm.train()
 print("ELM trained!", timeit(timer))
 
@@ -32,16 +32,29 @@ print("ELM prediction finished", timeit(timer))
 np.sign(predicted_y, out=predicted_y)
 
 timer = time.time()
-num_batches = math.ceil(labels.shape[0] / batch_size)  # float division, round up
+num_batches = math.ceil(float(labels.shape[0]) / batch_size)  # float division, round up
 current_index = 0
+skin_skin = 0
+skin_but_not_skin = 0
+not_skin_not_skin = 0
+not_skin_but_skin = 0
+
 missed_points = 0
 for label_batch in np.array_split(labels, num_batches):
     for i in range(len(label_batch)):
-        if label_batch[i] != predicted_y[current_index]:
-            missed_points += 1
+        if label_batch[i] == 1 and predicted_y[current_index] == 1:
+            skin_skin += 1
+        elif label_batch[i] == -1 and predicted_y[current_index] == -1:
+            not_skin_not_skin += 1
+        elif label_batch[i] == -1 and predicted_y[current_index] == 1: # not_skin_but_skin
+            not_skin_but_skin += 1
+        elif label_batch[i] == 1 and predicted_y[current_index] == -1:
+            skin_but_not_skin += 1
         current_index += 1
 
 print("Finished analyzing errors", timeit(timer))
 print(len(labels), "data points")
-print(missed_points, "incorrect points")
-print("%.02f%% correct" % ((len(labels) - missed_points) / len(labels) * 100))
+print("True-True:", skin_skin)
+print("False-False:", not_skin_not_skin)
+print("True-False:", skin_but_not_skin)
+print("False-True:", not_skin_but_skin)

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# This selects which queue
+#$ -q UI 
+# One node. 1-16 cores on smp
+#$ -pe smp 1
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+
+/Users/twrner/anaconda/bin/python /Users/twrner/skin_detection/data_extraction/data_extraction.py 1 20 /Shared/bdagroup3/Original/train/ -l /Shared/bdagroup3/Skin/train/ -o /Users/twrner/skin_detection/data_extraction/train_1_20_hsv -p 5 -hsv
