@@ -5,9 +5,13 @@ import sys
 import colorsys
 
 
-def get_pixel_class(rgb_tuple):
-    if rgb_tuple == (255, 255, 255):  # no skin
-        return -1
+def get_pixel_class(rgb_tuple, use_hsv=False):
+    if use_hsv:
+        if list(rgb_tuple) == list(colorsys.rgb_to_hsv(255, 255, 255)):
+            return -1
+    else:
+        if rgb_tuple == (255, 255, 255):  # no skin
+            return -1
     return 1
 
 

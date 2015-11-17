@@ -55,7 +55,7 @@ class SLFN(object):
             bias_vector = np.random.randn(num_neurons,)  # random vector of size num_neurons
             if neuron_function == "lin":
                 bias_vector = np.zeros(num_neurons)
-
+        # neuron_output = activation_function(x * w + b)
         assert weight_matrix.shape == (self.num_input_dimensions, num_neurons), \
             "W must be size [inputs, neurons] (expected [%d,%d])" % (self.num_input_dimensions, num_neurons)
         assert bias_vector.shape == (num_neurons,), "B must be size [neurons] (expected [%d])" % num_neurons
@@ -110,6 +110,9 @@ class SLFN(object):
 #        print (H > 0.01).sum(0)
         return hidden_layer_output
 
+    def get_neuron_count(self):
+        return sum([neuron[1] for neuron in self.neurons])
+
 
 class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
@@ -139,7 +142,7 @@ class ELM(SLFN):
         return result
 
     def train(self, batch_size=100, use_gpu=False):
-        self.beta_matrix = self._calculate_beta(batch_size, use_gpu)
+        HTH, HTT, self.beta_matrix = self._calculate_beta(batch_size, use_gpu)
 
     def _calculate_beta(self, batch_size=100, use_gpu=False):
         # We want to calculate Beta, in the equation
@@ -149,15 +152,14 @@ class ELM(SLFN):
         # H.T * H * Beta = H.T * T, where H.T is the transpose of H
         # Once we have the two sides, we solve for beta with a matrix solver, cpu or gpu
 
-        num_neurons = sum([neuron[1] for neuron in self.neurons])
-        batch_size = max(num_neurons, batch_size)
+        batch_size = max(self.get_neuron_count(), batch_size)
         num_batches = math.ceil(self.data.shape[0] / batch_size) #float division, round up
 
         if use_gpu:
             print("ERROR: GPU calculations not yet supported")
         else:
-            HTH, HTT, beta_matrix = self._calculate_beta_cpu(num_neurons, num_batches)
-            return beta_matrix
+            HTH, HTT, beta_matrix = self._calculate_beta_cpu(self.get_neuron_count(), num_batches)
+            return HTH, HTT, beta_matrix
 
     def _calculate_beta_cpu(self, num_neurons, num_batches):
         # We first calculate H.transpose * H and H.transpose * Targets
@@ -199,26 +201,3 @@ class ELM(SLFN):
         beta_matrix = cpu_solve(HTH, HTT, sym_pos=True)
 
         return HTH, HTT, beta_matrix
-
-    def _get_op_ranking(self, max_num_neurons, hidden_output=None, target=None):
-        """
-
-        :param max_num_neurons: The max number of OP neurons
-        :param hidden_output: hidden_output matrix
-        :param target: target matrix
-        :return:
-        """
-
-        # multiresponse sparse regression, used to rank the neurons
-
-        if target.shape[1] != 1:
-            print("ERROR: This ELM implementation currently only supports single class classification")
-            return
-        # Since we have only one output dimension, we use LARS
-
-
-        # if target.shape[1] < 10:  # fast mrsr for less outputs but O(2^t) in outputs
-        #     rank = mrsr(hidden_output, target, max_num_neurons)
-        # else:  # slow mrsr for many outputs but O(t) in outputs
-        #     rank = mrsr2(hidden_output, target, max_num_neurons)
-        # return rank, max_num_neurons
