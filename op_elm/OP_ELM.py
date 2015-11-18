@@ -176,7 +176,6 @@ class ELM(SLFN):
         # Adds to the matrix diagonal
         # Adding a small amount to the matrix diagonal improves numerical stability
         # Huang, G.-B., Zhou, H., Ding, X., Zhang, R.: Extreme learning machine for regression and
-        # multiclass classification. IEEE Trans. Syst. Man Cybern. Part B Cybern. 42(2), 513–529 (2012)
         HTH.ravel()[::num_neurons + 1] += self.alpha
 
         # Divide the data up into the batches
