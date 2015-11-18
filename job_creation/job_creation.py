@@ -19,7 +19,7 @@ def create_data_extraction_jobs(num_ensembles, image_dir, label_dir, filename_ba
                                   '-l', label_dir,
                                   '-o', "~/extracted_data/" + filename_base + "_" + str(min(image_group)) + "_" + str(max(image_group)),
                                   '-p', str(surrounding_pixels)])
-        file = open("dat_extr_" + str(surrounding_pixels) + "_" + str(min(image_group)) + "_" + str(max(image_group) + ".job"))
+        file = open("~/jobs/dat_extr_" + str(surrounding_pixels) + "_" + str(min(image_group)) + "_" + str(max(image_group) + ".job"))
         file.write("#!/bin/sh\n")
         file.write("# This selects which queue\n")
         file.write("#$ -q " + str(queue_name) + "\n")
