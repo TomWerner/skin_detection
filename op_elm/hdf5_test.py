@@ -8,7 +8,7 @@ import time
 def timeit(start_time):
     return "(%d seconds)" % (time.time() - start_time)
 
-file = h5py.File("../data_extraction/train_1_20_hsv.hdf5", "r")
+file = h5py.File("../data_extraction/skin_data.hdf5", "r")
 batch_size = 100000.0  # TODO: Figure out the optimum value for hdf5 files
 
 
