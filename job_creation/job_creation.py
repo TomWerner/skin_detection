@@ -19,20 +19,18 @@ def create_data_extraction_jobs(num_ensembles, image_dir, label_dir, filename_ba
                                   '-l', label_dir,
                                   '-o', "~/extracted_data/" + filename_base + "_" + str(min(image_group)) + "_" + str(max(image_group)),
                                   '-p', str(surrounding_pixels)])
+        file = open("dat_extr_" + str(surrounding_pixels) + "_" + str(min(image_group)) + "_" + str(max(image_group) + ".job"))
+        file.write("#!/bin/sh\n")
+        file.write("# This selects which queue\n")
+        file.write("#$ -q " + str(queue_name) + "\n")
+        file.write("# One node. 1-16 cores on smp\n")
+        file.write("#$ -pe smp 1\n")
+        file.write("# Make the folder first\n")
+        file.write("#$ -o /Users/twrner/outputs\n")
+        file.write("#$ -e /Users/twrner/errors\n")
+        file.write(data_ext_call + "\n")
 
-        print("""
-#!/bin/sh
-
-# This selects which queue""")
-        print("#$ -q " + str(queue_name))
-        print("""
-# One node. 1-16 cores on smp
-#$ -pe smp 1
-# Make the folder first
-#$ -o /Users/twrner/outputs
-#$ -e /Users/twrner/errors
-""")
-        print(data_ext_call)
+        file.close()
 
 
 def parse_arg(flag, sys_args, default):
