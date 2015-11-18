@@ -116,7 +116,7 @@ class SLFN(object):
 
 class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
-        super().__init__(data.shape[1], targets.shape[1])
+        super(ELM, self).__init__(data.shape[1], targets.shape[1])
         if not inputs_normalized:
             pass
             # TODO: Figure this out
