@@ -6,7 +6,7 @@ def create_job(args):
 #!/bin/sh
 
 # This selects which queue
-#$ -q UI
+#$ -q AL
 # One node. 1-16 cores on smp
 #$ -pe smp 16
 # Make the folder first
