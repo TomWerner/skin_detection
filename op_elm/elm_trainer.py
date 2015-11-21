@@ -13,7 +13,7 @@ def timeit(start_time):
 def train_elm(filename, batch_size, neuron_allocation=None):
     if not neuron_allocation:
         neuron_allocation = {100: "sigm"}
-    data_file = h5py.File("../data_extraction/skin_data.hdf5", "r")
+    data_file = h5py.File(filename, "r")
 
     timer = time.time()
     data = data_file['data']
