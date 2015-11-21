@@ -62,12 +62,12 @@ def train_elm(filename, batch_size, neuron_allocation=None):
 if __name__ == '__main__':
     if "-h" in sys.argv:
         print("python elm_trainer.py <filename> <batch size> [(lin|sigm|tanh)-neuron-###]")
+    else:
+        neuron_args = [x for x in sys.argv if "neuron" in x]
+        neurons = {x.split("-")[0]: int(x.split("-")[-1]) for x in neuron_args}
+        filename = sys.argv[1]
+        batch_size = int(sys.argv[2])
 
-    neuron_args = [x for x in sys.argv if "neuron" in x]
-    neurons = {x.split("-")[0]: int(x.split("-")[-1]) for x in neuron_args}
-    filename = sys.argv[1]
-    batch_size = int(sys.argv[2])
-
-    train_elm(filename, batch_size, neuron_allocation=neurons)
+        train_elm(filename, batch_size, neuron_allocation=neurons)
 
 

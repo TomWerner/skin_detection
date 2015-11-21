@@ -49,15 +49,16 @@ if __name__ == "__main__":
               "--python_exe xxx\n " +
               "--filename_base xxx\n " +
               "--queue_name xxx\n ")
-    num_ensembles = int(parse_arg("--num_ensembles", sys.argv, 1))
-    image_dir = parse_arg("--image_dir", sys.argv, "/Shared/bdagroup3/Original/train/")
-    label_dir = parse_arg("--label_dir", sys.argv, "/Shared/bdagroup3/Skin/train/")
-    validation_image_dir = parse_arg("--v_image_dir", sys.argv, "/Shared/bdagroup3/Original/val/")
-    validation_label_dir = parse_arg("--v_label_dir", sys.argv, "/Shared/bdagroup3/Skin/val/")
-    prompt_neurons = bool(parse_arg("--prompt_neurons", sys.argv, True))
-    surrounding_pixels = int(parse_arg("--num_pixels", sys.argv, 3))
-    python_exe = parse_arg("--python_exe", sys.argv, "~/anaconda/bin/python")
-    filename_base = parse_arg("--filename_base", sys.argv, "skin_data")
-    queue_name = parse_arg("--queue_name", sys.argv, "AL")
+    else:
+        num_ensembles = int(parse_arg("--num_ensembles", sys.argv, 1))
+        image_dir = parse_arg("--image_dir", sys.argv, "/Shared/bdagroup3/Original/train/")
+        label_dir = parse_arg("--label_dir", sys.argv, "/Shared/bdagroup3/Skin/train/")
+        validation_image_dir = parse_arg("--v_image_dir", sys.argv, "/Shared/bdagroup3/Original/val/")
+        validation_label_dir = parse_arg("--v_label_dir", sys.argv, "/Shared/bdagroup3/Skin/val/")
+        prompt_neurons = bool(parse_arg("--prompt_neurons", sys.argv, True))
+        surrounding_pixels = int(parse_arg("--num_pixels", sys.argv, 3))
+        python_exe = parse_arg("--python_exe", sys.argv, "~/anaconda/bin/python")
+        filename_base = parse_arg("--filename_base", sys.argv, "skin_data")
+        queue_name = parse_arg("--queue_name", sys.argv, "AL")
 
-    create_data_extraction_jobs(num_ensembles, image_dir, label_dir, filename_base, surrounding_pixels, python_exe, queue_name)
+        create_data_extraction_jobs(num_ensembles, image_dir, label_dir, filename_base, surrounding_pixels, python_exe, queue_name)

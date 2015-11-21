@@ -31,5 +31,6 @@ def parse_arg(flag, sys_args, default):
 if __name__ == '__main__':
     if "-h" in sys.argv:
         print("python elm_trainer.py <job tag> <filename> <batch size> [(lin|sigm|tanh)-neuron-###]")
+    else:
 
-    create_job(sys.argv[1:])
+        create_job(sys.argv[1:])
