@@ -2,9 +2,8 @@ __author__ = 'Tom'
 import numpy as np
 import numexpr as ne
 from scipy.linalg import solve as cpu_solve
-#from sklearn import preprocessing
 import math
-
+import pickle
 
 class SLFN(object):
     """
@@ -107,11 +106,33 @@ class SLFN(object):
 
         # Combine all the column results from the neurons
         hidden_layer_output = np.hstack(hidden_layer_output)
-#        print (H > 0.01).sum(0)
         return hidden_layer_output
 
     def get_neuron_count(self):
         return sum([neuron[1] for neuron in self.neurons])
+
+    def save(self, model_name):
+        m = {"beta_matrix": self.beta_matrix,
+             "alpha": self.alpha,
+             "neurons": self.neurons,
+             "num_input_dimensions": int(self.num_input_dimensions),
+             "num_output_dimensions": int(self.num_output_dimensions)}
+        try:
+            print("Saving at %s" % (model_name))
+            pickle.dump(m, open(str(model_name), "wb"), -1)
+        except IOError:
+            raise IOError("Cannot create a model file at: %s" % str(model_name))
+
+    def load(self, model_name):
+        try:
+            m = pickle.load(open(str(model_name), "rb"))
+        except IOError:
+            raise IOError("Model file not found: %s" % str(model_name))
+        self.neurons = m["neurons"]
+        self.beta_matrix = m["beta_matrix"]
+        self.alpha = m["alpha"]
+        self.num_input_dimensions = m["num_input_dimensions"]
+        self.num_output_dimensions = m["num_output_dimensions"]
 
 
 class ELM(SLFN):

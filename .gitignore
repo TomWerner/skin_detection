@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *.hdf5
+*.model
+*.elm 
 
 .idea/
 

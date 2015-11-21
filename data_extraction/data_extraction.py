@@ -123,7 +123,6 @@ def parse_arg(flag, sys_args, default):
         return sys_args[sys_args.index(flag) + 1]
     return default
 
-
 if __name__ == '__main__':
     if len(sys.argv) < 4 or "-h" in sys.argv:
         display_help_information()
@@ -149,4 +148,4 @@ if __name__ == '__main__':
 else:
     ORIGINAL_DIRECTORY = "/Users/test/fall_2015/bigdata/project/Original/train/"
     SKIN_DIRECTORY = "/Users/test/fall_2015/bigdata/project/Skin/train/"
-    extract_pixel_information(list(range(1, 10 + 1)), ORIGINAL_DIRECTORY, SKIN_DIRECTORY)
+    extract_pixel_information(list(range(1, 1 + 1)), ORIGINAL_DIRECTORY, SKIN_DIRECTORY)

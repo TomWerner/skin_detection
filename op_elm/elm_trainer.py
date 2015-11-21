@@ -4,6 +4,7 @@ from OP_ELM import ELM
 import numpy as np
 import time
 import sys
+import json
 
 
 def timeit(start_time):
@@ -58,6 +59,9 @@ def train_elm(filename, batch_size, neuron_allocation=None):
     print("False-False:", not_skin_not_skin)
     print("True-False:", skin_but_not_skin)
     print("False-True:", not_skin_but_skin)
+
+    elm.save(data_file.filename[:data_file.filename.rindex('.')] + '.elm')
+
 
 if __name__ == '__main__':
     if "-h" in sys.argv:
