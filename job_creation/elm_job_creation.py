@@ -16,7 +16,7 @@ def create_job(args):
 cd ~/skin_detection/op_elm
 
 ~/anaconda/bin/python elm_trainer.py %s
-""" % (" ".join(args))
+""" % (" ".join(args[1:]))
     file = open("/Users/twrner/jobs/train_elm_%s.job" % (args[0]), 'w')
     file.write(output_template)
     file.close()
@@ -30,6 +30,6 @@ def parse_arg(flag, sys_args, default):
 
 if __name__ == '__main__':
     if "-h" in sys.argv:
-        print("python elm_trainer.py <filename> <batch size> [(lin|sigm|tanh)-neuron-###]")
+        print("python elm_trainer.py <job tag> <filename> <batch size> [(lin|sigm|tanh)-neuron-###]")
 
     create_job(sys.argv[1:])
