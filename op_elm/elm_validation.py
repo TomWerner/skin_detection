@@ -48,6 +48,10 @@ def evaluate_elm(elm_file, validation_file, batch_size):
             current_index += 1
 
     print("Finished analyzing errors", timeit(timer))
+
+    print("Neurons:")
+    for neuron_function, num_neurons, weight_matrix, bias_vector in elm.neurons:
+        print(neuron_function, num_neurons)
     print(len(labels), "data points")
     print("True-True:", skin_skin)
     print("False-False:", not_skin_not_skin)
