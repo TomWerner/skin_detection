@@ -24,6 +24,12 @@ def evaluate_elm(elm_file, validation_file, batch_size):
 
     timer = time.time()
     num_batches = math.ceil(float(data.shape[0]) / batch_size)  # float division, round up
+
+    skin_skin = 0
+    skin_but_not_skin = 0
+    not_skin_not_skin = 0
+    not_skin_but_skin = 0
+
     for i in range(num_batches):
         start = i * batch_size
         end = (i + 1) * batch_size
@@ -31,13 +37,8 @@ def evaluate_elm(elm_file, validation_file, batch_size):
         predicted_y = elm.predict(data[start: end], batch_size=batch_size)
         np.sign(predicted_y, out=predicted_y)
 
-        timer = time.time()
         current_index = 0
-        skin_skin = 0
-        skin_but_not_skin = 0
-        not_skin_not_skin = 0
-        not_skin_but_skin = 0
-
+        
         label_batch = labels[start: end]
         for i in range(len(label_batch)):
             if label_batch[i] == 1 and predicted_y[current_index] == 1:
