@@ -133,6 +133,7 @@ class SLFN(object):
         self.alpha = m["alpha"]
         self.num_input_dimensions = m["num_input_dimensions"]
         self.num_output_dimensions = m["num_output_dimensions"]
+        print("Successfully loaded: %s" % model_name)
 
 
 class ELM(SLFN):
