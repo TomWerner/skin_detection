@@ -23,7 +23,7 @@ def evaluate_elm(elm_file, validation_file, batch_size):
     print("Data loaded", timeit(timer))
 
     timer = time.time()
-    num_batches = math.ceil(float(data.shape[0]) / batch_size)  # float division, round up
+    num_batches = int(math.ceil(float(data.shape[0]) / batch_size))  # float division, round up
 
     skin_skin = 0
     skin_but_not_skin = 0
@@ -61,6 +61,7 @@ def evaluate_elm(elm_file, validation_file, batch_size):
     print("False-False:", not_skin_not_skin)
     print("True-False:", skin_but_not_skin)
     print("False-True:", not_skin_but_skin)
+    print("-" * 80)
 
 
 if __name__ == '__main__':

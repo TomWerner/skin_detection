@@ -222,3 +222,5 @@ class ELM(SLFN):
         beta_matrix = cpu_solve(HTH, HTT, sym_pos=True)
 
         return HTH, HTT, beta_matrix
+
+
