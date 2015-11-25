@@ -1,0 +1,14 @@
+
+#!/bin/sh
+
+# This selects which queue
+#$ -q AL
+# One node. 1-16 cores on smp
+#$ -pe smp 16
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+
+cd ~/skin_detection/op_elm
+
+~/anaconda/bin/python elm_trainer.py /Users/twrner/extracted_data/skin_data_501_600.hdf5 10000 sigm-neuron-1500
