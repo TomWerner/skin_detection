@@ -71,6 +71,7 @@ if __name__ == '__main__':
     if "-h" in sys.argv:
         print("python elm_trainer.py <.elm file> <filename> <batch size>")
     else:
+        print(sys.argv)
         evaluate_elm(elm_file=sys.argv[1], validation_file=sys.argv[2], batch_size=int(sys.argv[3]))
 
 
