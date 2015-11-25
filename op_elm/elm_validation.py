@@ -23,7 +23,8 @@ def evaluate_elm(elm_file, validation_file, batch_size):
     print("Data loaded", timeit(timer))
 
     timer = time.time()
-    num_batches = int(math.ceil(float(data.shape[0]) / batch_size))  # float division, round up
+    outer_batch_size = batch_size * 10  # How much can fit in memory at a time
+    num_batches = int(math.ceil(float(data.shape[0]) / outer_batch_size))  # float division, round up
 
     skin_skin = 0
     skin_but_not_skin = 0
@@ -31,8 +32,8 @@ def evaluate_elm(elm_file, validation_file, batch_size):
     not_skin_but_skin = 0
 
     for i in range(num_batches):
-        start = i * batch_size
-        end = (i + 1) * batch_size
+        start = i * outer_batch_size
+        end = (i + 1) * outer_batch_size
 
         predicted_y = elm.predict(data[start: end], batch_size=batch_size)
         np.sign(predicted_y, out=predicted_y)
@@ -49,6 +50,8 @@ def evaluate_elm(elm_file, validation_file, batch_size):
                 not_skin_but_skin += 1
             elif label_batch[i] == 1 and predicted_y[current_index] == -1:
                 skin_but_not_skin += 1
+            else:
+                print(label_batch[i], predicted_y[current_index])
             current_index += 1
 
     print("Finished prediction and analysis", timeit(timer))
