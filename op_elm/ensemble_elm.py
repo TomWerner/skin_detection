@@ -16,7 +16,7 @@ def load_elm_models(model_directory):
     for file in os.listdir(model_directory):
         if file.endswith(".elm"):
             elm = ELM(np.zeros((0, 0)), np.zeros((0, 0)))
-            elm.load(file)
+            elm.load(model_directory + file)
             elm_models.append(elm_models)
     return elm_models
 
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     print("Loading models from:", sys.argv[3])
     print("Working with a batch size of:", int(sys.argv[4]))
     predict(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]))
-x   
+x
