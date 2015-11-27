@@ -17,7 +17,7 @@ def load_elm_models(model_directory):
         if file.endswith(".elm"):
             elm = ELM(np.zeros((0, 0)), np.zeros((0, 0)))
             elm.load(model_directory + file)
-            elm_models.append(elm_models)
+            elm_models.append(elm)
     return elm_models
 
 
