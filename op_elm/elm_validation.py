@@ -46,7 +46,7 @@ def evaluate_elm(elm_file, validation_file, batch_size):
                 skin_skin += 1
             elif label_batch[i] == -1 and predicted_y[current_index] == -1:
                 not_skin_not_skin += 1
-            elif label_batch[i] == -1 and predicted_y[current_index] == 1: # not_skin_but_skin
+            elif label_batch[i] == -1 and predicted_y[current_index] == 1:  # not_skin_but_skin
                 not_skin_but_skin += 1
             elif label_batch[i] == 1 and predicted_y[current_index] == -1:
                 skin_but_not_skin += 1

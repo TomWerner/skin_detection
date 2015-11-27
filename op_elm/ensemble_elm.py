@@ -36,10 +36,11 @@ def predict(test_data_file, output_file, model_directory, batch_size):
     for i in range(num_batches):
         start = i * outer_batch_size
         end = (i + 1) * outer_batch_size
-        final_predicted_y = np.zeros((end - start))
+        final_predicted_y = np.zeros((end - start, 1))
 
         for elm in elm_models:
             predicted_y = elm.predict(data[start: end], batch_size=batch_size)
+            print(predicted_y.shape)
             final_predicted_y += predicted_y / num_elms
 
         np.sign(final_predicted_y, out=final_predicted_y)
