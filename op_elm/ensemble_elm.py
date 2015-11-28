@@ -49,7 +49,7 @@ def create_jobs(data_dir, data_prefix, elm_directory, batch_size):
 # Make the folder first
 #$ -o /Users/twrner/outputs
 #$ -e /Users/twrner/errors
-~/anaconda/bin/python ~/skin_detection/op_elm/parallel_ensemble_elm.py """ + data_file + ' ~/project_results/' + output_data_file + ".hdf5" + ' ' + data_dir + ' ' + str(batch_size)
+~/anaconda/bin/python ~/skin_detection/op_elm/parallel_ensemble_elm.py """ + data_file + ' ~/project_results/' + output_data_file + ".hdf5" + ' ' + elm_model_file + ' ' + str(batch_size)
             file = open("/Users/twrner/jobs/test_ens_" + output_data_file + '.job', 'w')
             file.write(output_template)
             file.close()
