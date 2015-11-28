@@ -93,6 +93,7 @@ def extract_pixel_information(image_number_list,
     if labeled_data:
         labels = f.create_dataset("labels", (total_pixels, 1), dtype='i')
     print("We created a matrix of size (%d, %d)" % (total_pixels, num_pixel_dimensions))
+    f.close()
 
     # Now we go through all the images and extract their information. This can take a while.
     current_index = 0
