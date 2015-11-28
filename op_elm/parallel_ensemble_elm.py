@@ -29,11 +29,10 @@ def predict(test_data_file, output_file, elm_model_file, batch_size):
     for i in range(num_batches):
         start = i * outer_batch_size
         end = (i + 1) * outer_batch_size
-        final_predicted_y = np.zeros((end - start, 1))
 
         predicted_y = elm_model.predict(data[start: end], batch_size=batch_size)
-        np.sign(predicted_y, out=final_predicted_y)
-        prediction[start: end] = final_predicted_y
+        np.sign(predicted_y, out=predicted_y)
+        prediction[start: end] = predicted_y
 
 if __name__ == "__main__":
     print("Loading data from:", sys.argv[1])
