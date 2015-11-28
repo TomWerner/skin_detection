@@ -155,6 +155,7 @@ class ELM(SLFN):
 
         result = np.zeros((data.shape[0], self.num_output_dimensions))
         num_batches = math.ceil(data.shape[0] / batch_size) #float division, round up
+        print(data.shape, batch_size, num_batches)
 
         current_index = 0
         for i, data_batch in enumerate(np.array_split(data, num_batches)):
@@ -176,6 +177,8 @@ class ELM(SLFN):
 
         batch_size = max(self.get_neuron_count(), batch_size)
         num_batches = math.ceil(self.data.shape[0] / batch_size) #float division, round up
+        if num_batches == 0:
+            print("Num rows in data: ", self.data.shape[0], "Batch size:", batch_size)
 
         if use_gpu:
             print("ERROR: GPU calculations not yet supported")
