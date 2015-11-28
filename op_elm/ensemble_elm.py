@@ -11,45 +11,60 @@ def timeit(start_time):
     return "(%d seconds)" % (time.time() - start_time)
 
 
-def load_elm_models(model_directory):
+def get_elm_filenames(model_directory):
     elm_models = []
     for file in os.listdir(model_directory):
         if file.endswith(".elm"):
-            elm = ELM(np.zeros((0, 0)), np.zeros((0, 0)))
-            elm.load(model_directory + file)
-            elm_models.append(elm)
+            elm_models.append(model_directory + file)
     return elm_models
 
+def get_data_filenames(data_directory, data_prefix):
+    data_files = []
+    for file in os.listdir(data_directory):
+        if file.startswith(data_prefix):
+            data_files.append(data_directory + file)
+    return data_files
 
-def predict(test_data_file, output_file, model_directory, batch_size):
-    data_file = h5py.File(test_data_file, "r")
-    prediction_file = h5py.File(output_file, "w")
-    data = data_file['data']
-    prediction = prediction_file.create_dataset("labels", (data.shape[0], 1), dtype='i')
 
-    elm_models = load_elm_models(model_directory)
+def get_filename(file_path):
+    x = str(file_path)
+    return x[x.rindex('/') + 1: x.rindex('.')]
 
-    outer_batch_size = batch_size * 16  # How much can fit in memory at a time
-    num_batches = int(math.ceil(float(data.shape[0]) / outer_batch_size))  # float division, round up
-    num_elms = len(elm_models)
 
-    for i in range(num_batches):
-        start = i * outer_batch_size
-        end = (i + 1) * outer_batch_size
-        final_predicted_y = np.zeros((end - start, 1))
+def create_jobs(data_dir, data_prefix, elm_directory, batch_size):
+    elm_model_files = get_elm_filenames(elm_directory)
+    data_files = get_data_filenames(data_dir, data_prefix)
 
-        for elm in elm_models:
-            predicted_y = elm.predict(data[start: end], batch_size=batch_size)
-            print(predicted_y.shape)
-            final_predicted_y += predicted_y / num_elms
+    for elm_model_file in elm_model_files:
+        for data_file in data_files:
+            elm_model_name = get_filename(elm_model_file)
+            data_name = get_filename(data_file)
 
-        np.sign(final_predicted_y, out=final_predicted_y)
-        prediction[start: end] = final_predicted_y
+            output_data_file = "partial_" + elm_model_name + "_" + data_name
+            output_template = """#!/bin/sh
+# This selects which queue
+#$ -q UI,AL
+# One node. 1-16 cores on smp
+#$ -pe smp 16
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+~/anaconda/bin/python ~/skin_detection/op_elm/parallel_ensemble_elm.py """ + data_file + ' ~/project_results/' + output_data_file + ".hdf5" + ' ' + data_dir + ' ' + str(batch_size)
+            file = open("/Users/twrner/jobs/test_ens_" + output_data_file + '.job', 'w')
+            file.write(output_template)
+            file.close()
+
+
+
+def parse_arg(flag, default):
+    if flag in sys.argv:
+        return sys.argv[sys.argv.index(flag) + 1]
+    return default
 
 if __name__ == "__main__":
-    print("Loading data from:", sys.argv[1])
-    print("Saving data at:", sys.argv[2])
-    print("Loading models from:", sys.argv[3])
-    print("Working with a batch size of:", int(sys.argv[4]))
-    predict(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]))
-x
+    data_dir_ = parse_arg("--data_dir", "/Users/twrner/extracted_data/")
+    data_prefix_ = parse_arg("--data_prefix", "tst_img__")
+    elm_directory_ = parse_arg("--elm_dir", "/Users/twrner/extracted_data/")
+    batch_size_ = int(parse_arg("--batch_size", "8192"))
+
+    create_jobs(data_dir_, data_prefix_, elm_directory_, batch_size_)
