@@ -154,7 +154,7 @@ class ELM(SLFN):
             return
 
         result = np.zeros((data.shape[0], self.num_output_dimensions))
-        num_batches = math.ceil(data.shape[0] / batch_size) #float division, round up
+        num_batches = max(math.ceil(data.shape[0] / batch_size), 1) #float division, round up
         print(data.shape, batch_size, num_batches)
 
         current_index = 0
