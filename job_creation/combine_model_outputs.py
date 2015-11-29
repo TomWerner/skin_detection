@@ -12,7 +12,10 @@ def create_model_combination_jobs(data_dir, data_prefix, data_suffix, job_prefix
             x = h5py.File(data_dir + file, 'r')
             assert 'labels' in x.keys(), "Invalid partial: " + str(file)
             elm = file[file.index("skin_data_") + 10: file.index(data_suffix)]
-            data_group = file[file.index("__"):]
+            if "__" in str(file):
+                data_group = file[file.index("__"):]
+            else:
+                data_group = "skin_data_validation"
 
             elms = []
             if data_group in output_models.keys():
