@@ -4,14 +4,14 @@ import numpy as np
 import sys
 
 
-def create_model_combination_jobs(data_dir, data_prefix, batch_size=8192):
+def create_model_combination_jobs(data_dir, data_prefix, data_suffix, batch_size=8192):
     print(data_dir, data_prefix, batch_size)
     output_models = {}  # Maps output group to list of models in jury
     for file in os.listdir(data_dir):
         if file.startswith(data_prefix):
             x = h5py.File(data_dir + file, 'r')
             assert 'labels' in x.keys(), "Invalid partial: " + str(file)
-            elm = file[file.index("skin_data_") + 10: file.index("_tst_img")]
+            elm = file[file.index("skin_data_") + 10: file.index(data_suffix)]
             data_group = file[file.index("__"):]
 
             elms = []
@@ -52,5 +52,6 @@ if __name__ == "__main__":
     data_dir = parse_arg("--data_dir", "/Users/twrner/project_results/")
     data_prefix = parse_arg("--data_prefix", "partial_")
     batch_size = int(parse_arg("--batch_size", 8192))
+    data_suffix = parse_arg("--data_suffix", "_tst_img")
 
-    create_model_combination_jobs(data_dir, data_prefix, batch_size)
+    create_model_combination_jobs(data_dir, data_prefix, data_suffix, batch_size)
