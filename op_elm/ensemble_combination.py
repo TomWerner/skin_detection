@@ -9,7 +9,7 @@ def combine_all_model_output(result_file, hdf5_files, batch_size):
     labels_list = [h5py.File(f)['labels'] for f in hdf5_files]
     output_lengths = [data_item.shape[0] for data_item in labels_list]
 
-    if set(len(output_lengths)) != 1:
+    if len(set(output_lengths)) != 1:
         print("Output lengths are unequal:", output_lengths)
         return
 
@@ -29,10 +29,6 @@ def combine_all_model_output(result_file, hdf5_files, batch_size):
             combined[start: end] += labels[start: end] / num_models
 
     combined.close()
-
-
-
-
 
 
 if __name__ == "__main__":
