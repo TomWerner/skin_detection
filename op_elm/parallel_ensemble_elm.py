@@ -31,7 +31,6 @@ def predict(test_data_file, output_file, elm_model_file, batch_size):
         end = (i + 1) * outer_batch_size
 
         predicted_y = elm_model.predict(data[start: end], batch_size=batch_size)
-        np.sign(predicted_y, out=predicted_y)
         prediction[start: end] = predicted_y
     prediction_file.close()
 
