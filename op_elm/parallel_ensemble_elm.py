@@ -20,7 +20,7 @@ def predict(test_data_file, output_file, elm_model_file, batch_size):
     data_file = h5py.File(test_data_file, "r")
     prediction_file = h5py.File(output_file, "w")
     data = data_file['data']
-    prediction = prediction_file.create_dataset("labels", (data.shape[0], 1), dtype='i')
+    prediction = prediction_file.create_dataset("labels", (data.shape[0], 1), dtype='f')
 
     outer_batch_size = batch_size * 16  # How much can fit in memory at a time
     num_batches = int(math.ceil(float(data.shape[0]) / outer_batch_size))  # float division, round up
