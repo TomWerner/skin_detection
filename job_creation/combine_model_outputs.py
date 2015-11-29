@@ -9,7 +9,7 @@ def create_model_combination_jobs(data_dir, data_prefix, batch_size=8192):
     for file in os.listdir(data_dir):
         if file.startswith(data_prefix):
             x = h5py.File(data_dir + file, 'r')
-            assert 'data' in x.keys(), "Invalid partial: " + str(file)
+            assert 'labels' in x.keys(), "Invalid partial: " + str(file)
             elm = file[file.index("skin_data_") + 10: file.index("_tst_img")]
             data_group = file[file.index("__"):]
 
