@@ -16,10 +16,10 @@ def create_data_extraction_jobs(num_ensembles, image_dir, label_dir, filename_ba
         data_ext_call = " ".join([python_exe, data_ext_script_loc,
                                   str(min(image_group)), str(max(image_group)),
                                   image_dir,
-                                  '-l', label_dir,
+                                  #'-l', label_dir,
                                   '-o', "~/extracted_data/" + filename_base + "_" + str(min(image_group)) + "_" + str(max(image_group)),
                                   '-p', str(surrounding_pixels)])
-        file = open("/Users/twrner/jobs/dat_extr_%d_%04d_%04d.job" % (surrounding_pixels, min(image_group), max(image_group)), 'w')
+        file = open("/Users/twrner/jobs/test_dat_extr_%d_%04d_%04d.job" % (surrounding_pixels, min(image_group), max(image_group)), 'w')
         file.write("#!/bin/sh\n")
         file.write("# This selects which queue\n")
         file.write("#$ -q " + str(queue_name) + "\n")

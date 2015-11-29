@@ -5,9 +5,11 @@ import sys
 
 
 def create_model_combination_jobs(data_dir, data_prefix, batch_size=8192):
+    print(data_dir, data_prefix, batch_size)
     output_models = {}  # Maps output group to list of models in jury
     for file in os.listdir(data_dir):
         if file.startswith(data_prefix):
+            print(file)
             x = h5py.File(data_dir + file, 'r')
             assert 'labels' in x.keys(), "Invalid partial: " + str(file)
             elm = file[file.index("skin_data_") + 10: file.index("_tst_img")]
@@ -44,7 +46,7 @@ def parse_arg(flag, default):
         return sys.argv[sys.argv.index(flag) + 1]
     return default
 
-if __name__ == "__name__":
+if __name__ == "__main__":
     data_dir = parse_arg("--data_dir", "/Users/twrner/project_results/")
     data_prefix = parse_arg("--data_prefix", "partial_")
     batch_size = int(parse_arg("--batch_size", 8192))
