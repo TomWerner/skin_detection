@@ -28,7 +28,7 @@ def combine_all_model_output(result_file, hdf5_files, batch_size):
 
             combined[start: end] += labels[start: end] / num_models
 
-    combined.close()
+    combined_output.close()
 
 
 if __name__ == "__main__":
