@@ -14,9 +14,13 @@ def create_model_combination_jobs(data_dir, data_prefix, batch_size=8192):
             data_group = file[file.index("__"):]
             print(elm, data_group)
 
-            output_models.get(data_group, []).append(elm)
+            elms = []
+            if data_group in output_models.keys():
+                elms = output_models[data_group]
+            elms.append(elm)
+            output_models[data_group] = elms
 
-    print(len(output_models.keys()), "data groups")
+    print(len(list(output_models.keys())), "data groups")
     num_models = [len(output_models[key]) for key in output_models.keys()]
     if len(set(num_models)) != 1:
         print("Uncertain number of models:", output_models)
