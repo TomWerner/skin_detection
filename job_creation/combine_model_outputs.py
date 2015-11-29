@@ -39,7 +39,7 @@ def create_model_combination_jobs(data_dir, data_prefix, batch_size=8192):
 # Make the folder first
 #$ -o /Users/twrner/outputs
 #$ -e /Users/twrner/errors
-~/anaconda/bin/python ~/skin_detection/op_elm/ensemble_combination.py ~/project_results/""" + output_data_file + ".hdf5" + ' ' + data_dir + ' ' + key + ' ' + batch_size
+~/anaconda/bin/python ~/skin_detection/op_elm/ensemble_combination.py ~/project_results/""" + output_data_file + ".hdf5" + ' ' + data_dir + ' ' + key + ' ' + str(batch_size)
         file = open("/Users/twrner/jobs/test_combine_" + key + '.job', 'w')
         file.write(output_template)
         file.close()
