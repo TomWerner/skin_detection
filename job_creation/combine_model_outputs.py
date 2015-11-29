@@ -9,12 +9,10 @@ def create_model_combination_jobs(data_dir, data_prefix, batch_size=8192):
     output_models = {}  # Maps output group to list of models in jury
     for file in os.listdir(data_dir):
         if file.startswith(data_prefix):
-            print(file)
             x = h5py.File(data_dir + file, 'r')
             assert 'labels' in x.keys(), "Invalid partial: " + str(file)
             elm = file[file.index("skin_data_") + 10: file.index("_tst_img")]
             data_group = file[file.index("__"):]
-            print(elm, data_group)
 
             elms = []
             if data_group in output_models.keys():
