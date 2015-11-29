@@ -1,4 +1,3 @@
-from OP_ELM import ELM
 import numpy as np
 import h5py
 import os
