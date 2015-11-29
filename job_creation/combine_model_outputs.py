@@ -12,6 +12,7 @@ def create_model_combination_jobs(data_dir, data_prefix, batch_size=8192):
             assert 'labels' in x.keys(), "Invalid partial: " + str(file)
             elm = file[file.index("skin_data_") + 10: file.index("_tst_img")]
             data_group = file[file.index("__"):]
+            print(elm, data_group)
 
             output_models.get(data_group, []).append(elm)
 
