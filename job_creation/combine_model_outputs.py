@@ -4,7 +4,7 @@ import numpy as np
 import sys
 
 
-def create_model_combination_jobs(data_dir, data_prefix, data_suffix, batch_size=8192):
+def create_model_combination_jobs(data_dir, data_prefix, data_suffix, job_prefix, batch_size=8192):
     print(data_dir, data_prefix, batch_size)
     output_models = {}  # Maps output group to list of models in jury
     for file in os.listdir(data_dir):
@@ -38,7 +38,7 @@ def create_model_combination_jobs(data_dir, data_prefix, data_suffix, batch_size
 #$ -o /Users/twrner/outputs
 #$ -e /Users/twrner/errors
 ~/anaconda/bin/python ~/skin_detection/op_elm/ensemble_combination.py ~/project_results/""" + output_data_file + ".hdf5" + ' ' + data_dir + ' ' + key + ' ' + str(batch_size)
-        file = open("/Users/twrner/jobs/test_combine_" + key + '.job', 'w')
+        file = open("/Users/twrner/jobs/" + job_prefix + key + '.job', 'w')
         file.write(output_template)
         file.close()
 
@@ -49,9 +49,10 @@ def parse_arg(flag, default):
     return default
 
 if __name__ == "__main__":
-    data_dir = parse_arg("--data_dir", "/Users/twrner/project_results/")
-    data_prefix = parse_arg("--data_prefix", "partial_")
-    batch_size = int(parse_arg("--batch_size", 8192))
-    data_suffix = parse_arg("--data_suffix", "_tst_img")
+    data_dir_ = parse_arg("--data_dir", "/Users/twrner/project_results/")
+    data_prefix_ = parse_arg("--data_prefix", "partial_")
+    batch_size_ = int(parse_arg("--batch_size", 8192))
+    data_suffix_ = parse_arg("--data_suffix", "_tst_img")
+    job_prefix_ = parse_arg("--job_prefix", "test_combine_")
 
-    create_model_combination_jobs(data_dir, data_prefix, data_suffix, batch_size)
+    create_model_combination_jobs(data_dir_, data_prefix_, data_suffix_, job_prefix_, batch_size_)
