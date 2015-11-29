@@ -30,7 +30,7 @@ def get_filename(file_path):
     return x[x.rindex('/') + 1: x.rindex('.')]
 
 
-def create_jobs(data_dir, data_prefix, elm_directory, batch_size):
+def create_jobs(job_prefix, data_dir, data_prefix, elm_directory, batch_size):
     elm_model_files = get_elm_filenames(elm_directory)
     data_files = get_data_filenames(data_dir, data_prefix)
 
@@ -49,7 +49,7 @@ def create_jobs(data_dir, data_prefix, elm_directory, batch_size):
 #$ -o /Users/twrner/outputs
 #$ -e /Users/twrner/errors
 ~/anaconda/bin/python ~/skin_detection/op_elm/parallel_ensemble_elm.py """ + data_file + ' ~/project_results/' + output_data_file + ".hdf5" + ' ' + elm_model_file + ' ' + str(batch_size)
-            file = open("/Users/twrner/jobs/test_ens_" + output_data_file + '.job', 'w')
+            file = open("/Users/twrner/jobs/" + job_prefix + output_data_file + '.job', 'w')
             file.write(output_template)
             file.close()
 
@@ -64,5 +64,6 @@ if __name__ == "__main__":
     data_prefix_ = parse_arg("--data_prefix", "tst_img__")
     elm_directory_ = parse_arg("--elm_dir", "/Users/twrner/extracted_data/")
     batch_size_ = int(parse_arg("--batch_size", "8192"))
+    job_prefix = parse_arg("--job_prefix", "test_ens_")
 
-    create_jobs(data_dir_, data_prefix_, elm_directory_, batch_size_)
+    create_jobs(job_prefix, data_dir_, data_prefix_, elm_directory_, batch_size_)
