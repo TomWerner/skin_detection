@@ -49,6 +49,13 @@ def evaluate_elm(prediction_file, validation_file, batch_size):
 
     print("Finished prediction and analysis", timeit(timer))
 
+    print(len(labels), "data points")
+    print("True-True:", skin_skin)
+    print("False-False:", not_skin_not_skin)
+    print("True-False:", skin_but_not_skin)
+    print("False-True:", not_skin_but_skin)
+    print("-" * 80)
+
 
 if __name__ == '__main__':
     if "-h" in sys.argv:
