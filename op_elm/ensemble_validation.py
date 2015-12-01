@@ -41,7 +41,7 @@ def evaluate_elm(prediction_file, validation_file, batch_size):
         
         label_batch = labels[start: end]
         for i in range(len(label_batch)):
-            pred_value = predicted_y[current_index]
+            pred_value = int(predicted_y[current_index])
             pred_label = np.sign(pred_value)
             if label_batch[i] == 1 and pred_label == 1:
                 skin_skin += 1
