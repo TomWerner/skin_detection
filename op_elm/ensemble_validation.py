@@ -25,35 +25,45 @@ def evaluate_elm(prediction_file, validation_file, batch_size):
     skin_but_not_skin = 0
     not_skin_not_skin = 0
     not_skin_but_skin = 0
+    t_pos_vote = {}
+    t_neg_vote = {}
+    f_pos_vote = {}
+    f_neg_vote = {}
 
     for i in range(num_batches):
         start = i * outer_batch_size
         end = (i + 1) * outer_batch_size
 
         predicted_y = prediction[start: end]
-        np.sign(predicted_y, out=predicted_y)
+        # np.sign(predicted_y, out=predicted_y)
 
         current_index = 0
         
         label_batch = labels[start: end]
         for i in range(len(label_batch)):
-            if label_batch[i] == 1 and predicted_y[current_index] == 1:
+            pred_value = predicted_y[current_index]
+            pred_label = np.sign(pred_value)
+            if label_batch[i] == 1 and pred_label == 1:
                 skin_skin += 1
-            elif label_batch[i] == -1 and predicted_y[current_index] == -1:
+                t_pos_vote[pred_value] = t_pos_vote.get(pred_value, 0) + 1
+            elif label_batch[i] == -1 and pred_label == -1:
                 not_skin_not_skin += 1
-            elif label_batch[i] == -1 and predicted_y[current_index] == 1:  # not_skin_but_skin
+                t_neg_vote[pred_value] = t_neg_vote.get(pred_value, 0) + 1
+            elif label_batch[i] == -1 and pred_label == 1:  # False negative
                 not_skin_but_skin += 1
-            elif label_batch[i] == 1 and predicted_y[current_index] == -1:
+                f_neg_vote[pred_value] = f_neg_vote.get(pred_value, 0) + 1
+            elif label_batch[i] == 1 and pred_label == -1: # False positive
                 skin_but_not_skin += 1
+                f_pos_vote[pred_value] = f_pos_vote.get(pred_value, 0) + 1
             current_index += 1
 
     print("Finished prediction and analysis", timeit(timer))
 
     print(len(labels), "data points")
-    print("True-True:", skin_skin)
-    print("False-False:", not_skin_not_skin)
-    print("True-False:", skin_but_not_skin)
-    print("False-True:", not_skin_but_skin)
+    print("True Positive:", skin_skin, t_pos_vote)
+    print("True Negative:", not_skin_not_skin, t_neg_vote)
+    print("False Positive:", skin_but_not_skin, f_pos_vote)
+    print("False Negative:", not_skin_but_skin, f_neg_vote)
     print("-" * 80)
 
 
