@@ -26,7 +26,7 @@ def combine_all_model_output(result_file, hdf5_files, batch_size):
             start = i * outer_batch_size
             end = (i + 1) * outer_batch_size
 
-            combined[start: end] += labels[start: end] / num_models
+            combined[start: end] += np.sign(labels[start: end])
     for i in range(num_batches):
         start = i * outer_batch_size
         end = (i + 1) * outer_batch_size
