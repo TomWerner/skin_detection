@@ -29,6 +29,8 @@ def evaluate_elm(prediction_file, validation_file, batch_size):
     t_neg_vote = {}
     f_pos_vote = {}
     f_neg_vote = {}
+    # value => [t pos, t neg, f pos, f neg]
+    counts = {}
 
     for i in range(num_batches):
         start = i * outer_batch_size
@@ -42,19 +44,26 @@ def evaluate_elm(prediction_file, validation_file, batch_size):
         label_batch = labels[start: end]
         for i in range(len(label_batch)):
             pred_value = int(predicted_y[current_index])
+            if pred_value not in counts.keys():
+                counts[pred_value] = [0, 0, 0, 0]
+
             pred_label = np.sign(pred_value)
-            if label_batch[i] == 1 and pred_label == 1:
+            if label_batch[i] == 1 and pred_label == 1: # true positive
                 skin_skin += 1
                 t_pos_vote[pred_value] = t_pos_vote.get(pred_value, 0) + 1
-            elif label_batch[i] == -1 and pred_label == -1:
+                counts[pred_value][0] += 1
+            elif label_batch[i] == -1 and pred_label == -1: # true negative
                 not_skin_not_skin += 1
                 t_neg_vote[pred_value] = t_neg_vote.get(pred_value, 0) + 1
-            elif label_batch[i] == -1 and pred_label == 1:  # False negative
+                counts[pred_value][1] += 1
+            elif label_batch[i] == -1 and pred_label == 1:  # False positive
                 not_skin_but_skin += 1
                 f_neg_vote[pred_value] = f_neg_vote.get(pred_value, 0) + 1
-            elif label_batch[i] == 1 and pred_label == -1: # False positive
+                counts[pred_value][2] += 1
+            elif label_batch[i] == 1 and pred_label == -1: # False negative
                 skin_but_not_skin += 1
                 f_pos_vote[pred_value] = f_pos_vote.get(pred_value, 0) + 1
+                counts[pred_value][3] += 1
             current_index += 1
 
     print("Finished prediction and analysis", timeit(timer))
@@ -62,8 +71,9 @@ def evaluate_elm(prediction_file, validation_file, batch_size):
     print(len(labels), "data points")
     print("True Positive:", skin_skin, t_pos_vote)
     print("True Negative:", not_skin_not_skin, t_neg_vote)
-    print("False Positive:", skin_but_not_skin, f_pos_vote)
-    print("False Negative:", not_skin_but_skin, f_neg_vote)
+    print("False Negative:", skin_but_not_skin, f_neg_vote)
+    print("False Positive:", not_skin_but_skin, f_pos_vote)
+    print(counts)
     print("-" * 80)
 
 
