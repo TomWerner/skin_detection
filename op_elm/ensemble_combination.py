@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     hdf5_files = []
     for file in os.listdir(data_dir):
-        if file.endswith(data_chunk):
+        if file.endswith(data_chunk) and file.startswith("partial"):
             hdf5_files.append(data_dir + file)
 
 
