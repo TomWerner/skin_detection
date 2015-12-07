@@ -4,6 +4,7 @@ import numexpr as ne
 from scipy.linalg import solve as cpu_solve
 import math
 import pickle
+from sklearn import preprocessing
 
 class SLFN(object):
     """
@@ -40,16 +41,12 @@ class SLFN(object):
                 if self.num_input_dimensions < num_neurons:
                     print("INFO: Only using %d neurons; only %d input dimensions" % (self.num_input_dimensions, self.num_input_dimensions))
                     num_neurons = self.num_input_dimensions
-                # TODO: Why is it just a diagonal matrix, not random?
                 weight_matrix = np.eye(self.num_input_dimensions, num_neurons)  # diag matrix, num rows x num cols
             else:
-                # TODO: Check out Explicit Computation of Input Weights in Extreme Learning Machines
-
                 # each input has a weight, and it connects each input with each input node
                 weight_matrix = np.random.randn(self.num_input_dimensions, num_neurons)
                 #TODO: check hpelm high dimensionality fix
                 weight_matrix *= 3 / self.num_input_dimensions ** 0.5  # high dimensionality fix
-                #print(weight_matrix)
         if bias_vector is None:
             bias_vector = np.random.randn(num_neurons,)  # random vector of size num_neurons
             if neuron_function == "lin":
@@ -140,10 +137,8 @@ class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
         super(ELM, self).__init__(data.shape[1], targets.shape[1])
         if not inputs_normalized:
-            pass
-            # TODO: Figure this out
-            # data = preprocessing.scale(data)
-            # targets = preprocessing.scale(targets)
+            data = preprocessing.scale(np.asarray(data, dtype=float), axis=0)
+            targets = preprocessing.scale(np.asarray(targets, dtype=float), axis=0)
 
         self.data = data
         self.targets = targets
@@ -155,7 +150,6 @@ class ELM(SLFN):
 
         result = np.zeros((data.shape[0], self.num_output_dimensions))
         num_batches = max(math.ceil(data.shape[0] / batch_size), 1) #float division, round up
-        print(data.shape, batch_size, num_batches)
 
         current_index = 0
         for i, data_batch in enumerate(np.array_split(data, num_batches)):
