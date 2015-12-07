@@ -54,8 +54,8 @@ def extract_pixel_information(image_number_list,
         if i % 10 == 0:
             print("Done with first %d images" % i)
 
-
-extract_pixel_information(range(3901, 4001),
-                          '/Users/test/fall_2015/bigdata/project/Original/test/',
-                          '/Users/test/fall_2015/bigdata/project/Skin/test/',
-                          '/Users/test/fall_2015/bigdata/project/partial_skin_data_901_1000_tst_img__3901_4000.hdf5')
+for start, stop in [(min(a), max(a)) for a in np.array_split(np.arange(2001, 4001), 20)]:
+    extract_pixel_information(range(start, stop + 1),
+                          '/Shared/bdagroup3/Original/test/',
+                          '/Users/twrner/skin_test_output/',
+                          '/Users/twrner/project_results/combined___' + str(start) + '_' + str(stop) + '.hdf5.hdf5')
