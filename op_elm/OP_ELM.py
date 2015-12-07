@@ -5,6 +5,7 @@ from scipy.linalg import solve as cpu_solve
 import math
 import pickle
 from sklearn import preprocessing
+import time
 
 class SLFN(object):
     """
@@ -137,8 +138,10 @@ class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
         super(ELM, self).__init__(data.shape[1], targets.shape[1])
         if not inputs_normalized:
+            start = time.start()
             data = preprocessing.scale(np.asarray(data, dtype=float), axis=0)
             targets = preprocessing.scale(np.asarray(targets, dtype=float), axis=0)
+            print("Finished normalizing data:", (time.start() - start))
 
         self.data = data
         self.targets = targets
