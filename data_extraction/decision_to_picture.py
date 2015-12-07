@@ -30,7 +30,9 @@ def create_skin_mask(filename, original_dir, skin_dir, labels, surrounding_pixel
     for x in range(surrounding_pixels, img.size[0] - surrounding_pixels - 1):
         for y in range(surrounding_pixels, img.size[1] - surrounding_pixels - 1):
             # print(labels[pixel_number])
-            pixels[x,y] = (full_pixel_data[x, y][0], full_pixel_data[x, y][1], full_pixel_data[x, y][2], int(float(labels[pixel_number] + 13) / 26.0 * 255))
+            # pixels[x,y] = (full_pixel_data[x, y][0], full_pixel_data[x, y][1], full_pixel_data[x, y][2], int(float(labels[pixel_number] + 13) / 26.0 * 255))
+            if labels[pixel_number] > 0:
+                pixels[x,y] = full_pixel_data[x, y]
             pixel_number += 1
 
     img.save(skin_dir + filename + "_predicted.png")
