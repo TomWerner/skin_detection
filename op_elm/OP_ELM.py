@@ -138,18 +138,22 @@ class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
         super(ELM, self).__init__(data.shape[1], targets.shape[1])
         if not inputs_normalized:
-            start = time.start()
+            start = time.time()
             data = preprocessing.scale(np.asarray(data, dtype=float), axis=0)
             targets = preprocessing.scale(np.asarray(targets, dtype=float), axis=0)
-            print("Finished normalizing data:", (time.start() - start))
+            print("Finished normalizing data:", (time.time() - start))
 
         self.data = data
         self.targets = targets
 
-    def predict(self, data, batch_size=100):
+    def predict(self, data, batch_size=100, inputs_normalized=False):
         if self.beta_matrix is None:
             print("ERROR: Cannot predict without first calculating beta")
             return
+        if not inputs_normalized:
+            start = time.time()
+            data = preprocessing.scale(np.asarray(data, dtype=float), axis=0)
+            print("Finished normalizing data:", (time.time() - start))
 
         result = np.zeros((data.shape[0], self.num_output_dimensions))
         num_batches = max(math.ceil(data.shape[0] / batch_size), 1) #float division, round up
