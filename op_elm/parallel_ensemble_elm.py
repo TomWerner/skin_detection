@@ -11,7 +11,7 @@ def timeit(start_time):
 
 
 def load_elm(model_file):
-    elm = ELM(np.zeros((0, 0)), np.zeros((0, 0)))
+    elm = ELM(np.zeros((0, 0)), np.zeros((0, 0)), inputs_normalized=True)
     elm.load(model_file)
     return elm
 
