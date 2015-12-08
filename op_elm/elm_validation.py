@@ -12,7 +12,7 @@ def timeit(start_time):
 
 
 def evaluate_elm(elm_file, validation_file, batch_size):
-    elm = ELM(np.zeros((0,0)), np.zeros((0,0)))
+    elm = ELM(np.zeros((0,0)), np.zeros((0,0)), inputs_normalized=True)
     elm.load(elm_file)
 
     data_file = h5py.File(validation_file, "r")
