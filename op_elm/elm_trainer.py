@@ -75,7 +75,7 @@ if __name__ == '__main__':
         filename = sys.argv[1]
         batch_size = int(sys.argv[2])
 
-        train_elm(filename, batch_size, neuron_allocation=neurons, inputs_normalized=True)
+        train_elm(filename, batch_size, neuron_allocation=neurons, inputs_normalized=False)
     # print("Inputs normalized")
     # train_elm("/Users/test/fall_2015/bigdata/project/skin_detection/data_extraction/skin_data.hdf5", 100, {"tanh": 100}, inputs_normalized=True)
     # print("Inputs not normalized")
