@@ -50,8 +50,8 @@ def evaluate_elm(elm_file, validation_file, batch_size):
                 not_skin_but_skin += 1
             elif label_batch[i] == 1 and predicted_y[current_index] == -1:
                 skin_but_not_skin += 1
-            else:
-                print(label_batch[i], predicted_y[current_index])
+            # else:
+            #     print(label_batch[i], predicted_y[current_index])
             current_index += 1
 
     print("Finished prediction and analysis", timeit(timer))
