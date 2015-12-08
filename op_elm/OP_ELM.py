@@ -109,37 +109,15 @@ class SLFN(object):
     def get_neuron_count(self):
         return sum([neuron[1] for neuron in self.neurons])
 
-    def save(self, model_name):
-        m = {"beta_matrix": self.beta_matrix,
-             "alpha": self.alpha,
-             "neurons": self.neurons,
-             "num_input_dimensions": int(self.num_input_dimensions),
-             "num_output_dimensions": int(self.num_output_dimensions)}
-        try:
-            print("Saving at %s" % (model_name))
-            pickle.dump(m, open(str(model_name), "wb"), -1)
-        except IOError:
-            raise IOError("Cannot create a model file at: %s" % str(model_name))
-
-    def load(self, model_name):
-        try:
-            m = pickle.load(open(str(model_name), "rb"))
-        except IOError:
-            raise IOError("Model file not found: %s" % str(model_name))
-        self.neurons = m["neurons"]
-        self.beta_matrix = m["beta_matrix"]
-        self.alpha = m["alpha"]
-        self.num_input_dimensions = m["num_input_dimensions"]
-        self.num_output_dimensions = m["num_output_dimensions"]
-        print("Successfully loaded: %s" % model_name)
-
 
 class ELM(SLFN):
     def __init__(self, data, targets, inputs_normalized=False):
         super(ELM, self).__init__(data.shape[1], targets.shape[1])
         if not inputs_normalized:
             start = time.time()
-            data = preprocessing.scale(np.asarray(data, dtype=float), axis=0)
+            data = np.asarray(data, dtype=float)
+            self.scaler = preprocessing.StandardScaler().fit(data)
+            data = self.scaler.transform(data)
             # data /= 255
             # targets /= 255
             print("Finished normalizing data:", (time.time() - start))
@@ -153,7 +131,8 @@ class ELM(SLFN):
             return
         if not inputs_normalized:
             start = time.time()
-            data = preprocessing.scale(np.asarray(data, dtype=float), axis=0)
+            # data = preprocessing.scale(np.asarray(data, dtype=float), axis=0)
+            data = self.scaler.transform(np.asarray(data, dtype=float))
             print("Finished normalizing data:", (time.time() - start))
 
         result = np.zeros((data.shape[0], self.num_output_dimensions))
@@ -167,6 +146,11 @@ class ELM(SLFN):
         return result
 
     def train(self, batch_size=100, use_gpu=False):
+        try:
+            import mkl
+            print("Using:", mkl.get_max_threads(), "threads")
+        except:
+            pass
         HTH, HTT, self.beta_matrix = self._calculate_beta(batch_size, use_gpu)
 
     def _calculate_beta(self, batch_size=100, use_gpu=False):
@@ -228,4 +212,29 @@ class ELM(SLFN):
 
         return HTH, HTT, beta_matrix
 
+    def save(self, model_name):
+        m = {"beta_matrix": self.beta_matrix,
+             "alpha": self.alpha,
+             "neurons": self.neurons,
+             "num_input_dimensions": int(self.num_input_dimensions),
+             "num_output_dimensions": int(self.num_output_dimensions),
+             "scaler": self.scaler}
+        try:
+            print("Saving at %s" % (model_name))
+            pickle.dump(m, open(str(model_name), "wb"), -1)
+        except IOError:
+            raise IOError("Cannot create a model file at: %s" % str(model_name))
+
+    def load(self, model_name):
+        try:
+            m = pickle.load(open(str(model_name), "rb"))
+        except IOError:
+            raise IOError("Model file not found: %s" % str(model_name))
+        self.neurons = m["neurons"]
+        self.beta_matrix = m["beta_matrix"]
+        self.alpha = m["alpha"]
+        self.num_input_dimensions = m["num_input_dimensions"]
+        self.num_output_dimensions = m["num_output_dimensions"]
+        self.scaler = m['scaler']
+        print("Successfully loaded: %s" % model_name)
 
