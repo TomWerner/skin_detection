@@ -139,8 +139,10 @@ class ELM(SLFN):
         super(ELM, self).__init__(data.shape[1], targets.shape[1])
         if not inputs_normalized:
             start = time.time()
-            data = np.asarray(data, dtype=float) / 255  # preprocessing.scale(np.asarray(data, dtype=float), axis=0)
-            targets = np.asarray(data, dtype=float) / 255  # preprocessing.scale(np.asarray(targets, dtype=float), axis=0)
+            data = np.asarray(data, dtype=float)  # preprocessing.scale(np.asarray(data, dtype=float), axis=0)
+            targets = np.asarray(data, dtype=float)  # preprocessing.scale(np.asarray(targets, dtype=float), axis=0)
+            data /= 255
+            targets /= 255
             print("Finished normalizing data:", (time.time() - start))
 
         self.data = data
