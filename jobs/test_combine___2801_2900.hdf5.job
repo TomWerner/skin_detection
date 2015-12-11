@@ -1,0 +1,9 @@
+#!/bin/sh
+# This selects which queue
+#$ -q UI,AL
+# One node. 1-16 cores on smp
+#$ -pe smp 1
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+~/anaconda/bin/python ~/skin_detection/op_elm/ensemble_combination.py ~/project_results/combined___2801_2900.hdf5.hdf5 /Users/twrner/project_results/ __2801_2900.hdf5 8192

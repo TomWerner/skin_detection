@@ -1,0 +1,15 @@
+
+#!/bin/sh
+
+# This selects which queue
+#$ -q UI
+# One node. 1-16 cores on smp
+#$ -pe smp 16
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+#$ -l kepler
+
+cd ~/skin_detection/op_elm
+
+time ~/anaconda/bin/python elm_validation_cuda.py ~/extracted_data/skin_data_1_100.elm ~/extracted_data/skin_data_1_100.hdf5 10000

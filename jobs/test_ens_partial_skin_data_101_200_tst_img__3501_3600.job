@@ -1,0 +1,9 @@
+#!/bin/sh
+# This selects which queue
+#$ -q UI,AL
+# One node. 1-16 cores on smp
+#$ -pe smp 16
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+~/anaconda/bin/python ~/skin_detection/op_elm/parallel_ensemble_elm.py /Users/twrner/extracted_data/tst_img__3501_3600.hdf5 ~/project_results/partial_skin_data_101_200_tst_img__3501_3600.hdf5 /Users/twrner/extracted_data/skin_data_101_200.elm 8192

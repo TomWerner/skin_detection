@@ -1,0 +1,14 @@
+qsub train_elm_1001_1100.job
+qsub train_elm_101_200.job
+qsub train_elm_101_200_lin.job
+qsub train_elm_1_100.job
+qsub train_elm_1101_1200.job
+qsub train_elm_1201_1300.job
+qsub train_elm_201_300.job
+qsub train_elm_301_400.job
+#qsub train_elm_401_500.job
+qsub train_elm_501_600.job
+qsub train_elm_601_700.job
+qsub train_elm_701_800.job
+qsub train_elm_801_900.job
+qsub train_elm_901_1000.job

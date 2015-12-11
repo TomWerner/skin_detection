@@ -1,0 +1,14 @@
+
+#!/bin/sh
+
+# This selects which queue
+#$ -q AL,UI
+# One node. 1-16 cores on smp
+#$ -pe smp 1
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+
+cd ~/skin_detection/op_elm
+
+~/anaconda/bin/python ensemble_validation.py ~/project_results/combined_skin_data_validation.hdf5 ~/extracted_data/skin_data_validation.hdf5 8192

@@ -4,7 +4,7 @@
 # This selects which queue
 #$ -q AL
 # One node. 1-16 cores on smp
-#$ -pe smp 16
+#$ -pe smp 1
 # Make the folder first
 #$ -o /Users/twrner/outputs
 #$ -e /Users/twrner/errors

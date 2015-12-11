@@ -1,6 +1,6 @@
 #!/bin/sh
 # This selects which queue
-#$ -q AL
+#$ -q AL,UI
 # One node. 1-16 cores on smp
 #$ -pe smp 1
 # Make the folder first

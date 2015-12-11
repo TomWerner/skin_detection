@@ -2,7 +2,7 @@
 #!/bin/sh
 
 # This selects which queue
-#$ -q UI
+#$ -q AL
 # One node. 1-16 cores on smp
 #$ -pe smp 16
 # Make the folder first
@@ -11,4 +11,4 @@
 
 cd ~/skin_detection/op_elm
 
-time ~/anaconda/bin/python elm_validation.py ~/extracted_data/skin_data_1_100.elm ~/extracted_data/skin_data_validation.hdf5 10000
+time ~/anaconda/bin/python elm_validation.py ~/extracted_data/skin_data_401_500.elm ~/extracted_data/skin_data_validation.hdf5 8192

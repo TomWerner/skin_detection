@@ -1,0 +1,9 @@
+#!/bin/sh
+# This selects which queue
+#$ -q UI
+# One node. 1-16 cores on smp
+#$ -pe smp 1
+# Make the folder first
+#$ -o /Users/twrner/outputs
+#$ -e /Users/twrner/errors
+~/anaconda/bin/python ~/skin_detection/data_extraction/data_extraction.py 2401 2500 /Shared/bdagroup3/Original/test/ -o ~/extracted_data/tst_img__2401_2500 -p 3
